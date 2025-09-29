@@ -1,0 +1,216 @@
+/* --- General body and fonts --- */
+body {
+  background: #fceec0
+    url("https://www.transparenttextures.com/patterns/paper-fibers.png");
+  font-family: "Comic Sans MS", "Chalkboard SE", cursive, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* --- Book Cover --- */
+.book-cover {
+  position: fixed;
+  inset: 0;
+  background: #d6c7a1;
+  box-shadow: inset 0 0 30px #a97c50;
+  border: 15px solid #a67c52;
+  flex-direction: column;
+  z-index: 9999;
+  user-select: none;
+  transition: opacity 0.8s ease;
+}
+
+.book-image {
+  width: 250px;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+.cover-title {
+  font-size: 3rem;
+  color: #8c5c34;
+  text-shadow: 1px 1px #fff;
+  user-select: none;
+}
+
+/* --- Storybook Container --- */
+.storybook-container {
+  margin-top: 100px !important;
+  width: 90vw;
+  max-width: 900px;
+  height: 700px;
+  margin: 40px auto;
+  display: flex;
+  perspective: 1500px;
+  transform-style: preserve-3d;
+  position: relative;
+  border: 15px solid #a67c52;
+  background: #d6c7a1;
+  box-shadow: inset 0 0 30px #a97c50;
+  border-radius: 12px;
+  overflow: visible;
+  user-select: none;
+}
+
+/* --- Pages --- */
+.page {
+  width: 50%;
+  height: 100%;
+  background: #fff8dc;
+  box-shadow: inset 0 0 10px #ccb58c;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 2px dashed #c49a6c;
+  border-radius: 0 12px 12px 0;
+  backface-visibility: hidden;
+  overflow-y: auto;
+  font-size: 1rem;
+  color: #5b3a29;
+}
+
+.book-left-page {
+  border-radius: 12px 0 0 12px;
+  border-right: 2px solid #c49a6c;
+}
+
+.book-right-page {
+  border-radius: 0 12px 12px 0;
+}
+
+/* --- Titles --- */
+.storybook-title {
+  font-size: 2.5rem;
+  color: #8c5c34;
+  text-shadow: 1px 1px #fff;
+  user-select: none;
+}
+
+/* --- How to Play --- */
+.how-to-play {
+  background: #fff3d1;
+  border: 2px dashed #c49a6c;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #5b3a29;
+}
+
+.how-to-play h5 {
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #8c5c34;
+  text-align: center;
+}
+
+.how-to-play ul {
+  padding-left: 1.2rem;
+  list-style: none;
+}
+
+.how-to-play li {
+  margin-bottom: 8px;
+}
+
+.starttbtn {
+  border: 1px solid #8c5c34;
+  background-color: #5b3a29;
+  font-size: 28px;
+  color: white;
+  border-radius: 30px;
+  padding-top: 10px;
+  padding-bottom: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.starttbtn:hover {
+  border: 1px solid #8c5c34;
+  background-color: #5b3a29;
+  color: white;
+}
+
+.rstrt-btn {
+  border: 1px solid #8c5c34;
+  background-color: #5b3a29;
+  color: white;
+}
+
+.rstrt-btn:hover {
+  border: 1px solid #8c5c34;
+  background-color: #5b3a29;
+  color: white;
+}
+
+/* --- Game Board Cards --- */
+.card-container {
+  width: 90px;
+  height: 90px;
+  margin: 10px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+  border-radius: 12px;
+}
+
+.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #a67c52;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  background: #fff7e6;
+  font-size: 2rem;
+  user-select: none;
+}
+
+.card-front {
+  background: #ffe7a3;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: #fff;
+}
+
+.card-back img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* --- Page Flip Animation --- */
+.storybook-container.open {
+  animation: openBookFlip 1.2s forwards;
+}
+
+@keyframes openBookFlip {
+  0% {
+    transform: rotateY(90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}

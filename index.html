@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Memory Adventure</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Closed Book Cover -->
+    <div
+      id="book-cover"
+      class="book-cover d-flex flex-column justify-content-center align-items-center"
+    >
+      <img src="./cover.png" alt="Closed Book" class="book-image" />
+      <h1 class="cover-title mt-3">Memory Adventure</h1>
+      <button class="btn btn-lg mt-4" onclick="openBook()">
+        <i><h1 class="cover-title starttbtn">Start</h1></i>
+      </button>
+    </div>
+
+    <!-- Open Book Container -->
+    <div id="storybook-container" class="storybook-container d-none">
+      <div class="book-left-page page">
+        <div class="text-center mb-4">
+          <h1 class="storybook-title">Memory Adventure</h1>
+          <h4 id="level-display">Level 1 - 1 Pair</h4>
+          <button class="btn mt-3 rstrt-btn" onclick="restartFromLevel1()">
+            Restart Game
+          </button>
+        </div>
+
+        <div class="how-to-play mt-4">
+          <h5>How to Play</h5>
+          <ul>
+            <li>🧠 Flip over two cards to find a match.</li>
+            <li>👀 All cards are shown for a few seconds at the start.</li>
+            <li>🔍 Remember where they are!</li>
+            <li>💖 Match all pairs to finish the level.</li>
+            <li>🚀 Each level adds more pairs!</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="book-right-page page">
+        <div id="game-board" class="row justify-content-center"></div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-gPHL6+TDHFoovIigJ9Ks3njA3/xQcN4j+6Jw3R+so0pIqLdcuH2Q+9L6xHR8f5b7"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+      integrity="sha384-OERcA2JD8GIKTdPgsn6U6PG8p4Jn/jfHs31h8NJk+z5oMvo0EXrNtUm9n3UqOG/E"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kids Memory Storybook</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #f9f2e7;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        color: #5b3a29;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      /* Book cover styles */
+      #book-cover {
+        width: 400px;
+        height: 500px;
+        background: #f4d35e;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        padding: 40px 20px;
+        user-select: none;
+        transition: opacity 0.8s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      #book-cover img {
+        width: 150px;
+        margin-bottom: 30px;
+      }
+
+      #book-cover h1 {
+        font-size: 2.5rem;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px #b48629;
+      }
+
+      #book-cover button {
+        font-size: 1.5rem;
+        padding: 10px 30px;
+        border-radius: 30px;
+        border: none;
+        background-color: #ee964b;
+        color: #fff;
+        box-shadow: 0 5px 10px #c47210;
+        transition: background-color 0.3s ease;
+      }
+
+      #book-cover button:hover {
+        background-color: #d97f13;
+      }
+
+      /* Storybook container - initially hidden */
+      #storybook-container {
+        width: 850px;
+        height: 600px;
+        background: #fff6e0;
+        border-radius: 20px;
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        display: none;
+        flex-direction: row;
+        gap: 20px;
+        perspective: 1500px;
+        opacity: 0;
+        transform-style: preserve-3d;
+        transition: transform 1s ease, opacity 1s ease;
+        user-select: none;
+      }
+
+      #storybook-container.open {
+        display: flex;
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+
+      /* Left page (how to play) */
+      #left-page {
+        flex: 1;
+        background: #fceabb;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: inset 0 0 10px #e0c676;
+        font-size: 1.2rem;
+        line-height: 1.4;
+        color: #6b4a1a;
+      }
+
+      /* Right page (game board) */
+      #right-page {
+        flex: 1.5;
+        background: #fff;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: inset 0 0 10px #f4d35e;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #level-display {
+        font-weight: bold;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        color: #f4a261;
+        text-shadow: 1px 1px #b57514;
+      }
+
+      #game-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+        width: 100%;
+        max-width: 500px;
+      }
+
+      /* Card container with perspective */
+      .card-container {
+        perspective: 1000px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      /* Card inner for flipping */
+      .card-inner {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* square */
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Flip on flipped class */
+      .card-container.flipped .card-inner {
+        transform: rotateY(180deg);
+      }
+
+      /* Front and back faces */
+      .card-front,
+      .card-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        backface-visibility: hidden;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-front {
+        background: #f4d35e;
+        color: #5b3a29;
+        border: 3px solid #f4d35e;
+      }
+
+      .card-back {
+        background: #fff;
+        transform: rotateY(180deg);
+        border: 3px solid #f4d35e;
+      }
+
+      /* Card images */
+      .card-back img {
+        max-width: 75%;
+        max-height: 75%;
+        border-radius: 10px;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      /* Matched cards style */
+      .card-container.matched .card-inner {
+        box-shadow: 0 0 15px 3px #f4a261;
+        cursor: default;
+      }
+
+      /* Modal image styling */
+      #modalImage {
+        max-width: 150px;
+        margin-bottom: 15px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        #storybook-container {
+          width: 90vw;
+          height: 80vh;
+          flex-direction: column;
+        }
+        #left-page,
+        #right-page {
+          flex: none;
+          width: 100%;
+          margin-bottom: 15px;
+        }
+        #game-board {
+          max-width: 100%;
+          grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Closed Book Cover -->
+    <div
+      id="book-cover"
+      role="button"
+      tabindex="0"
+      aria-label="Start the memory game"
+    >
+      <img src="https://i.imgur.com/q1dyelT.png" alt="Closed Storybook" />
+      <h1>Fun Memory Storybook</h1>
+      <button id="start-button" class="btn btn-warning">Start Game</button>
+    </div>
+
+    <!-- Storybook container - Hidden initially -->
+    <div
+      id="storybook-container"
+      aria-live="polite"
+      aria-atomic="true"
+      role="main"
+    >
+      <!-- Left page -->
+      <div id="left-page" aria-label="How to play">
+        <h2>How to Play</h2>
+        <p>
+          1. At each level, you'll see pairs of cards flipped for 3 seconds.
+        </p>
+        <p>
+          2. After they flip back, find all matching pairs by clicking cards.
+        </p>
+        <p>3. Match all pairs to move to the next level.</p>
+        <p>4. Have fun and challenge your memory!</p>
+      </div>
+
+      <!-- Right page -->
+      <div id="right-page">
+        <div id="level-display">Level 1 - 1 Pair</div>
+        <div id="game-board" aria-label="Memory cards game board"></div>
+      </div>
+    </div>
+
+    <!-- Level Complete Modal -->
+    <div
+      class="modal fade"
+      id="levelCompleteModal"
+      tabindex="-1"
+      aria-labelledby="levelCompleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content"
+          style="background-color: #fff6e0; border-radius: 15px"
+        >
+          <div class="modal-header" style="border-bottom: none">
+            <h5
+              class="modal-title"
+              id="levelCompleteModalLabel"
+              style="color: #5b3a29; font-family: 'Comic Sans MS', cursive"
+            >
+              Level Complete!
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div
+            class="modal-body"
+            style="
+              color: #5b3a29;
+              font-family: 'Comic Sans MS', cursive;
+              font-size: 1.25rem;
+              text-align: center;
+            "
+          >
+            <img
+              id="modalImage"
+              src="https://i.imgur.com/TqjO7tC.png"
+              alt="Level Complete"
+            />
+            <p id="modalMessage">Great job! Ready for the next level?</p>
+          </div>
+          <div class="modal-footer" style="border-top: none">
+            <button type="button" class="btn btn-warning" id="nextLevelBtn">
+              Next Level 🚀
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Images for the memory cards
+      const allImages = [
+        "./characters/mickey.png",
+        "./characters/minnie.png",
+        "./characters/donald.png",
+        "./characters/goofy.png",
+        "./characters/simba.png",
+        "./characters/snow.png",
+        "./characters/beauty.png",
+      ];
+
+      let firstCard = null;
+      let secondCard = null;
+      let lockBoard = true;
+      let matchedCount = 0;
+      let currentLevel = 1;
+
+      // Modal elements
+      const levelCompleteModal = new bootstrap.Modal(
+        document.getElementById("levelCompleteModal")
+      );
+      const modalMessage = document.getElementById("modalMessage");
+      const nextLevelBtn = document.getElementById("nextLevelBtn");
+      const modalImage = document.getElementById("modalImage");
+
+      // Event listener for Next Level button
+      nextLevelBtn.addEventListener("click", () => {
+        levelCompleteModal.hide();
+        currentLevel++;
+        startGame();
+      });
+
+      // Shuffle utility
+      function shuffle(array) {
+        return array.sort(() => 0.5 - Math.random());
+      }
+
+      // Start the game level
+      function startGame() {
+        const board = document.getElementById("game-board");
+        board.innerHTML = "";
+        firstCard = null;
+        secondCard = null;
+        matchedCount = 0;
+        lockBoard = true;
+
+        const levelPairs = currentLevel;
+        if (levelPairs > allImages.length) {
+          // Game completed
+          modalMessage.textContent = `🎉 You've completed all levels! Great job!`;
+          modalImage.src = "https://i.imgur.com/TqjO7tC.png";
+          nextLevelBtn.textContent = "Restart from Level 1";
+          nextLevelBtn.onclick = () => {
+            levelCompleteModal.hide();
+            currentLevel = 1;
+            nextLevelBtn.textContent = "Next Level 🚀";
+            nextLevelBtn.onclick = () => {
+              levelCompleteModal.hide();
+              currentLevel++;
+              startGame();
+            };
+            startGame();
+          };
+          levelCompleteModal.show();
+          return;
+        } else {
+          // Reset next level button if coming back from game end
+          nextLevelBtn.textContent = "Next Level 🚀";
+          nextLevelBtn.onclick = () => {
+            levelCompleteModal.hide();
+            currentLevel++;
+            startGame();
+          };
+        }
+
+        // Update level display
+        document.getElementById(
+          "level-display"
+        ).innerText = `Level ${currentLevel} - ${levelPairs} Pair${
+          levelPairs > 1 ? "s" : ""
+        }`;
+
+        // Pick images and shuffle
+        const selectedImages = shuffle([...allImages]).slice(0, levelPairs);
+        const cardsArray = shuffle([...selectedImages, ...selectedImages]);
+
+        cardsArray.forEach((imgSrc) => {
+          // Create card elements
+          const cardContainer = document.createElement("div");
+          cardContainer.className = "card-container";
+
+          const cardInner = document.createElement("div");
+          cardInner.className = "card-inner";
+
+          const cardFront = document.createElement("div");
+          cardFront.className = "card-front";
+          cardFront.textContent = "?";
+
+          const cardBack = document.createElement("div");
+          cardBack.className = "card-back";
+          const image = document.createElement("img");
+          image.src = imgSrc;
+          image.alt = "Character";
+          cardBack.appendChild(image);
+
+          cardInner.appendChild(cardFront);
+          cardInner.appendChild(cardBack);
+          cardContainer.appendChild(cardInner);
+
+          // Store image source for matching
+          cardContainer.dataset.img = imgSrc;
+
+          cardContainer.addEventListener("click", () =>
+            handleCardClick(cardContainer)
+          );
+          board.appendChild(cardContainer);
+
+          // Initially flipped to show for 3 seconds
+          cardContainer.classList.add("flipped");
+        });
+
+        // Show cards for 3 seconds, then flip them back
+        setTimeout(() => {
+          document.querySelectorAll(".card-container").forEach((card) => {
+            card.classList.remove("flipped");
+          });
+          lockBoard = false;
+        }, 3000);
+      }
+
+      function handleCardClick(card) {
+        if (
+          lockBoard ||
+          card.classList.contains("flipped") ||
+          card.classList.contains("matched")
+        )
+          return;
+
+        card.classList.add("flipped");
+
+        if (!firstCard) {
+          firstCard = card;
+          return;
+        }
+
+        secondCard = card;
+        lockBoard = true;
+
+        const isMatch = firstCard.dataset.img === secondCard.dataset.img;
+
+        if (isMatch) {
+          firstCard.classList.add("matched");
+          secondCard.classList.add("matched");
+          matchedCount += 2;
+          resetTurn();
+
+          const totalCardsThisLevel = currentLevel * 2;
+          if (matchedCount === totalCardsThisLevel) {
+            setTimeout(() => {
+              modalMessage.textContent = `🌟 Well done! You finished Level ${currentLevel}! Ready for the next level?`;
+              modalImage.src = "https://i.imgur.com/TqjO7tC.png";
+              levelCompleteModal.show();
+              lockBoard = true; // prevent clicking while modal is open
+            }, 500);
+          }
+        } else {
+          setTimeout(() => {
+            firstCard.classList.remove("flipped");
+            secondCard.classList.remove("flipped");
+            resetTurn();
+          }, 1000);
+        }
+      }
+
+      function resetTurn() {
+        [firstCard, secondCard] = [null, null];
+        lockBoard = false;
+      }
+
+      // Open book animation from cover
+      function openBook() {
+        const cover = document.getElementById("book-cover");
+        const storybook = document.getElementById("storybook-container");
+
+        // Animate cover fading out
+        cover.style.opacity = 0;
+        cover.style.pointerEvents = "none";
+        setTimeout(() => {
+          cover.classList.add("d-none");
+          storybook.style.display = "flex";
+          storybook.style.opacity = "0";
+          storybook.style.transform = "rotateY(90deg)";
+
+          // Animate opening
+          setTimeout(() => {
+            storybook.classList.add("open");
+            storybook.style.opacity = "1";
+            storybook.style.transform = "rotateY(0deg)";
+          }, 50);
+
+          // Start the game
+          startGame();
+        }, 800);
+      }
+
+      // Attach event to start button
+      document
+        .getElementById("start-button")
+        .addEventListener("click", openBook);
+
+      // Accessibility: allow keyboard start
+      document
+        .getElementById("book-cover")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            openBook();
+          }
+        });
+    </script>
+  </body>
+</html>
